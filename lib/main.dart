@@ -1,6 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  const keyApplicationId = 'kc82M5unCK8MJaTqfoNznjKB81hDIzSiwTcXEI10';
+  const keyClientKey = '6Yuul1iejWa340zLS9HND3devdZhSTMGXyFNejwr';
+  const keyParseServerUrl = 'https://parseapi.back4app.com';
+
+  await Parse().initialize(keyApplicationId, keyParseServerUrl,
+      clientKey: keyClientKey, autoSendSessionId: true);
+
+
   runApp(const MyApp());
 }
 
@@ -11,7 +21,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'ContApp',
       theme: ThemeData(
         // This is the theme of your application.
         //

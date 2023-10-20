@@ -1,5 +1,5 @@
-name: contatos_dio
-description: A new Flutter project.
+name: contapp
+description: Um aplicativo de lista de contatos intuitivo e fácil de usar. Ele permite que você gerencie seus contatos de maneira eficiente. Você pode adicionar, editar e excluir contatos facilmente. Ele também oferece recursos como pesquisa rápida.
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
@@ -12,11 +12,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  firebase_core: ^2.19.0
-  firebase_storage: ^11.3.1
   image_picker: ^1.0.4
-
-
+  parse_server_sdk_flutter: ^3.1.0
   cupertino_icons: ^1.0.2
 
 dev_dependencies:
