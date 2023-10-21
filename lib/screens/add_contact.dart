@@ -1,6 +1,9 @@
+import 'dart:io';
+import 'package:contapp/models/contact.dart';
 import 'package:flutter/material.dart';
-import 'package:your_app_name/models/contact.dart';
-import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 
 class AddContactScreen extends StatefulWidget {
   @override
@@ -9,101 +12,100 @@ class AddContactScreen extends StatefulWidget {
 
 class _AddContactScreenState extends State<AddContactScreen> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController phoneController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  File _selectedImage;
+  final _nameController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _emailController = TextEditingController();
+  late File _image;
+
+  Future<void> _pickImage(ImageSource source) async {
+    final pickedImage = await ImagePicker().getImage(source: source);
+
+    if (pickedImage != null) {
+      final appDir = await getApplicationDocumentsDirectory();
+      final fileName = basename(pickedImage.path);
+      final savedImage = await File(pickedImage.path).copy('${appDir.path}/$fileName');
+
+      setState(() {
+        _image = savedImage;
+      });
+    }
+  }
+
+  void _saveForm() {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    final newContact = Contact(
+      name: _nameController.text,
+      phone: _phoneController.text,
+      email: _emailController.text,
+      image: _image,
+    );
+
+    // Adicione aqui a lógica para salvar o contato, incluindo a imagem, no Back4App.
+
+    Navigator.of(context as BuildContext).pop();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Adicionar Contato'),
+        title: Text('Add Contact'),
       ),
       body: Form(
         key: _formKey,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              CircleAvatar(
-                backgroundImage: _selectedImage != null
-                    ? FileImage(_selectedImage)
-                    : AssetImage('assets/default_avatar.png'),
-                radius: 50,
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  // Implemente a seleção de imagem aqui
-                  // _selectedImage = await selectImage();
-                  // setState(() {});
-
-                  // Exemplo de seleção de imagem simulada
-                  _selectedImage = File('/path/to/selected/image.jpg');
-                  setState(() {});
-                },
-                child: Text('Selecionar Imagem'),
-              ),
-              TextFormField(
-                controller: nameController,
-                decoration: InputDecoration(labelText: 'Nome'),
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return 'Campo obrigatório';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: phoneController,
-                decoration: InputDecoration(labelText: 'Telefone (com DDD)'),
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return 'Campo obrigatório';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: emailController,
-                decoration: InputDecoration(labelText: 'E-mail'),
-              ),
-              SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () async {
-                  if (_formKey.currentState.validate()) {
-                    // Faça o upload da imagem para o Back4App
-                    final ParseFile imageFile = ParseFile(_selectedImage);
-                    final response = await imageFile.save();
-
-                    if (response.success) {
-                      final newContact = Contact(
-                        name: nameController.text,
-                        phone: phoneController.text,
-                        email: emailController.text,
-                        image: imageFile,
-                      );
-
-                      final saveResponse = await newContact.save();
-
-                      if (saveResponse.success) {
-                        Navigator.pop(context);
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text('Erro ao salvar o contato.'),
-                        ));
-                      }
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text('Erro ao enviar a imagem.'),
-                      ));
-                    }
-                  }
-                },
-                child: Text('Salvar'),
-              ),
-            ],
-          ),
+        child: ListView(
+          padding: EdgeInsets.all(16),
+          children: <Widget>[
+            TextFormField(
+              controller: _nameController,
+              decoration: InputDecoration(labelText: 'Name'),
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'Please enter a name';
+                }
+                return null;
+              },
+            ),
+            TextFormField(
+              controller: _phoneController,
+              decoration: InputDecoration(labelText: 'Phone'),
+            ),
+            TextFormField(
+              controller: _emailController,
+              decoration: InputDecoration(labelText: 'Email'),
+            ),
+            SizedBox(height: 20),
+            _image != null
+                ? Image.file(_image, height: 100)
+                : SizedBox(
+                    height: 100,
+                  ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                FlatButton.icon(
+                  icon: Icon(Icons.camera),
+                  label: Text('Take a Photo'),
+                  textColor: Theme.of(context).primaryColor,
+                  onPressed: () => _pickImage(ImageSource.camera),
+                ),
+                FlatButton.icon(
+                  icon: Icon(Icons.image),
+                  label: Text('Choose from Gallery'),
+                  textColor: Theme.of(context).primaryColor,
+                  onPressed: () => _pickImage(ImageSource.gallery),
+                ),
+              ],
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _saveForm,
+              child: Text('Save Contact'),
+            ),
+          ],
         ),
       ),
     );

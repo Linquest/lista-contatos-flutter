@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class AppLocalizations {
@@ -5,7 +6,7 @@ class AppLocalizations {
 
   AppLocalizations(this.locale);
 
-  static Map<String, Map<String, String>> _localizedValues = {
+  static final Map<String, Map<String, String>> _localizedValues = {
     'en': {
       'appTitle': 'ContApp',
       'addContact': 'Add Contact',
@@ -22,25 +23,25 @@ class AppLocalizations {
     },
   };
 
-  String get appTitle {
-    return _localizedValues[locale.languageCode]['appTitle'];
+  String? get appTitle {
+    return _localizedValues[locale.languageCode]?['appTitle'];
   }
 
-  String get addContact {
-    return _localizedValues[locale.languageCode]['addContact'];
+  String? get addContact {
+    return _localizedValues[locale.languageCode]?['addContact'];
   }
 
-  String get editContact {
-    return _localizedValues[locale.languageCode]['editContact'];
+  String? get editContact {
+    return _localizedValues[locale.languageCode]?['editContact'];
   }
 
-  String get contactList {
-    return _localizedValues[locale.languageCode]['contactList'];
+  String? get contactList {
+    return _localizedValues[locale.languageCode]?['contactList'];
   }
 
   // Adicione métodos para mais chaves conforme necessário
 
-  static AppLocalizations of(BuildContext context) {
+  static AppLocalizations? of(BuildContext context) {
     return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
 

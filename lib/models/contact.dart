@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
 
 class Contact {
@@ -12,7 +14,7 @@ class Contact {
     this.name,
     this.phone,
     this.email,
-    this.imagePath,
+    this.imagePath, required File image,
   });
 
   factory Contact.fromApi(ParseObject parseObject) {
@@ -21,9 +23,11 @@ class Contact {
       name: parseObject.get('name'),
       phone: parseObject.get('phone'),
       email: parseObject.get('email'),
-      imagePath: parseObject.get('imagePath'),
+      imagePath: parseObject.get('imagePath'), image: null,
     );
   }
+
+  File? get image => null;
 
   ParseObject toParseObject() {
     final parseObject = ParseObject('Contact')

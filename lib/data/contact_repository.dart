@@ -1,5 +1,5 @@
+import 'package:contapp/models/contact.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
-import 'package:your_app_name/models/contact.dart';
 
 class ContactRepository {
   final ParseObject parseObject;
@@ -7,7 +7,7 @@ class ContactRepository {
   ContactRepository(this.parseObject);
 
   Future<List<Contact>> getAllContacts() async {
-    final queryBuilder = QueryBuilder<Contact>(parseObject)
+    final queryBuilder = QueryBuilder<Contact>(parseObject as Contact)
       ..orderByAscending('name');
 
     final apiResponse = await queryBuilder.query();
@@ -39,13 +39,13 @@ class ContactRepository {
   }
 
   Future<void> updateContact(Contact contact) async {
-    final queryBuilder = QueryBuilder<Contact>(parseObject)
+    final queryBuilder = QueryBuilder<Contact>(parseObject as Contact)
       ..whereEqualTo('objectId', contact.objectId);
 
     final apiResponse = await queryBuilder.query();
 
     if (apiResponse.success && apiResponse.results != null) {
-      final contactObject = apiResponse.results.first;
+      final contactObject = apiResponse.results?.first;
 
       contactObject
         ..set<String>('name', contact.name)

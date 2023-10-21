@@ -1,8 +1,8 @@
+import 'package:contapp/models/contact.dart';
+import 'package:contapp/screens/add_contact.dart';
+import 'package:contapp/screens/contact_details.dart';
 import 'package:flutter/material.dart';
-import 'package:your_app_name/models/contact.dart';
 import 'package:parse_server_sdk_flutter/parse_server_sdk.dart';
-import 'package:your_app_name/screens/contact_details.dart';
-import 'package:your_app_name/screens/add_contact.dart';
 
 class ContactListScreen extends StatefulWidget {
   @override
@@ -21,14 +21,14 @@ class _ContactListScreenState extends State<ContactListScreen> {
   Future<void> loadContacts() async {
     // Implemente a lógica para carregar a lista de contatos do Back4App
     // Certifique-se de configurar corretamente o Parse Server no início do seu aplicativo
-    final queryBuilder = QueryBuilder<Contact>(ParseObject('Contact'))
+    final queryBuilder = QueryBuilder<Contact>(ParseObject('Contact') as Contact)
       ..orderByAscending('name');
 
     final apiResponse = await queryBuilder.query();
 
     if (apiResponse.success && apiResponse.results != null) {
       setState(() {
-        contacts = apiResponse.results.map((e) => Contact.fromApi(e)).toList();
+        contacts = apiResponse.results!.map((e) => Contact.fromApi(e)).toList();
       });
     } else {
       // Trate erros de carregamento de contatos, se houver
